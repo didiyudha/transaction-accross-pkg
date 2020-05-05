@@ -5,11 +5,18 @@ import (
 	"database/sql"
 	"github.com/didiyudha/transaction-accross-pkg/domain/profile/model"
 	"github.com/didiyudha/transaction-accross-pkg/internal/platform/postgres"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
 type ProfileRepository interface {
 	Save(ctx context.Context, profile * model.Profile) error
+	FindByID(ctx context.Context, id uuid.UUID) (*model.Profile, error)
+	StartTx(ctx context.Context) (ProfileRepository, error)
+	Commit() error
+	Rollback() error
+	WithTransaction(ctx context.Context) (ProfileRepository, error)
+	Context() context.Context
 }
 
 type profileRepository struct {
