@@ -1,1 +1,5 @@
-package transaction_accross_pkg
+package main
+
+func main() {
+
+}
