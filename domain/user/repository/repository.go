@@ -5,11 +5,13 @@ import (
 	"database/sql"
 	"github.com/didiyudha/transaction-accross-pkg/domain/user/model"
 	"github.com/didiyudha/transaction-accross-pkg/internal/platform/postgres"
+	"github.com/google/uuid"
 	"github.com/pkg/errors"
 )
 
 type UserRepository interface {
 	Save(ctx context.Context, user *model.User) error
+	FindByID(ctx context.Context, id uuid.UUID) (*model.User, error)
 }
 
 type userRepository struct {
