@@ -44,6 +44,10 @@ func (p *profileUseCase) Save(ctx context.Context, req model.CreateProfileReq) (
 		profileTrx.Rollback()
 		return nil, err
 	}
+	if err = profileTrx.Commit(); err != nil {
+		profileTrx.Rollback()
+		return nil, err
+	}
 	profileDetail := model.ProfileDetail{
 		ID:        profile.ID,
 		FirstName: profile.FirstName,
