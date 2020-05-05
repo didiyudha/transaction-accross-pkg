@@ -15,3 +15,13 @@ type Profile struct {
 	UpdatedAt time.Time  `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
 }
+
+type CreateProfileReq struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Address   string `json:"address"`
+	User      struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+	} `json:"user"`
+}
