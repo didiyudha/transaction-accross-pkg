@@ -12,6 +12,11 @@ import (
 type UserRepository interface {
 	Save(ctx context.Context, user *model.User) error
 	FindByID(ctx context.Context, id uuid.UUID) (*model.User, error)
+	StartTx(ctx context.Context) (UserRepository, error)
+	Commit() error
+	Rollback() error
+	WithTransaction(ctx context.Context) (UserRepository, error)
+	Context() context.Context
 }
 
 type userRepository struct {
@@ -42,32 +47,48 @@ func (u *userRepository) WithTransaction(ctx context.Context) (UserRepository, e
 }
 
 
-func (u *userRepository) GetDB(isWrite bool) postgres.SQL {
-	if u.SQL != nil {
-		return u.SQL
+func (uq *userRepository) StartTx(ctx context.Context) (UserRepository, error) {
+	trx, err := uq.dbWrite.Begin()
+	if err != nil {
+		return nil, err
 	}
-	if isWrite {
-		return u.dbWrite
+	pqTx := postgres.Tx{
+		Tx:    trx,
 	}
-	return u.dbRead
+	trxCtx := context.WithValue(ctx, postgres.TrxKeyContext, trx)
+	return &userRepository{
+		SQL: &pqTx,
+		Transactioner: &pqTx,
+		TrxCtx: trxCtx,
+	}, nil
 }
 
-func (u *userRepository) Commit() error {
-	if u.Transactioner == nil {
+func (uq *userRepository) GetDB(isWrite bool) postgres.SQL {
+	if uq.SQL != nil {
+		return uq.SQL
+	}
+	if isWrite {
+		return uq.dbWrite
+	}
+	return uq.dbRead
+}
+
+func (uq *userRepository) Commit() error {
+	if uq.Transactioner == nil {
 		return nil
 	}
-	if err := u.Transactioner.Commit(); err != nil {
-		u.Transactioner.Rollback()
+	if err := uq.Transactioner.Commit(); err != nil {
+		uq.Transactioner.Rollback()
 		return err
 	}
 	return nil
 }
 
-func (u *userRepository) Rollback() error {
-	if u.Transactioner == nil {
+func (uq *userRepository) Rollback() error {
+	if uq.Transactioner == nil {
 		return nil
 	}
-	if err := u.Transactioner.Rollback(); err != nil {
+	if err := uq.Transactioner.Rollback(); err != nil {
 		return err
 	}
 	return nil
