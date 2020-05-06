@@ -27,6 +27,12 @@ type userRepository struct {
 	TrxCtx context.Context
 }
 
+func NewUserRepository(dbWrite, dbRead *sql.DB) UserRepository {
+	return &userRepository{
+		dbRead:        dbRead,
+		dbWrite:       dbWrite,
+	}
+}
 
 func (u *userRepository) Context() context.Context {
 	return u.TrxCtx
