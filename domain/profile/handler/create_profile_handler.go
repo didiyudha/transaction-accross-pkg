@@ -35,5 +35,5 @@ func (h *ProfileHandler) FindByID(c echo.Context) error {
 	if profileDetail.ID == uuid.Nil {
 		return echo.NewHTTPError(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	}
-	c.JSON(http.StatusOK, profileDetail)
+	return c.JSON(http.StatusOK, profileDetail)
 }
