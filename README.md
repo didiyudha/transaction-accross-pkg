@@ -1,1 +1,1 @@
-# transaction-accross-pkg
+# Transaction accross packages
