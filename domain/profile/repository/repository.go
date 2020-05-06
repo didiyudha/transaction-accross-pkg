@@ -34,8 +34,8 @@ func NewProfileRepository(dbWrite, dbRead *sql.DB) ProfileRepository {
 	}
 }
 
-func (uq *profileRepository) StartTx(ctx context.Context) (ProfileRepository, error) {
-	trx, err := uq.dbWrite.Begin()
+func (p *profileRepository) StartTx(ctx context.Context) (ProfileRepository, error) {
+	trx, err := p.dbWrite.Begin()
 	if err != nil {
 		return nil, err
 	}
@@ -50,11 +50,11 @@ func (uq *profileRepository) StartTx(ctx context.Context) (ProfileRepository, er
 	}, nil
 }
 
-func (uq *profileRepository) Context() context.Context {
-	return uq.TrxCtx
+func (p *profileRepository) Context() context.Context {
+	return p.TrxCtx
 }
 
-func (uq *profileRepository) WithTransaction(ctx context.Context) (ProfileRepository, error) {
+func (p *profileRepository) WithTransaction(ctx context.Context) (ProfileRepository, error) {
 	trx, ok := ctx.Value(postgres.TrxKeyContext).(*sql.Tx)
 	if !ok {
 		return nil, errors.New("unable to get transaction in context")
@@ -69,32 +69,32 @@ func (uq *profileRepository) WithTransaction(ctx context.Context) (ProfileReposi
 }
 
 
-func (uq *profileRepository) GetDB(isWrite bool) postgres.SQL {
-	if uq.SQL != nil {
-		return uq.SQL
+func (p *profileRepository) GetDB(isWrite bool) postgres.SQL {
+	if p.SQL != nil {
+		return p.SQL
 	}
 	if isWrite {
-		return uq.dbWrite
+		return p.dbWrite
 	}
-	return uq.dbRead
+	return p.dbRead
 }
 
-func (uq *profileRepository) Commit() error {
-	if uq.Transactioner == nil {
+func (p *profileRepository) Commit() error {
+	if p.Transactioner == nil {
 		return nil
 	}
-	if err := uq.Transactioner.Commit(); err != nil {
-		uq.Transactioner.Rollback()
+	if err := p.Transactioner.Commit(); err != nil {
+		p.Transactioner.Rollback()
 		return err
 	}
 	return nil
 }
 
-func (uq *profileRepository) Rollback() error {
-	if uq.Transactioner == nil {
+func (p *profileRepository) Rollback() error {
+	if p.Transactioner == nil {
 		return nil
 	}
-	if err := uq.Transactioner.Rollback(); err != nil {
+	if err := p.Transactioner.Rollback(); err != nil {
 		return err
 	}
 	return nil
