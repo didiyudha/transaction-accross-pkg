@@ -18,7 +18,7 @@ type profileUseCase struct {
 	UserRepository    userrepo.UserRepository
 }
 
-func NewProfileRepository(profileRepository repository.ProfileRepository, userRepository userrepo.UserRepository) ProfileUseCase {
+func NewProfileUseCase(profileRepository repository.ProfileRepository, userRepository userrepo.UserRepository) ProfileUseCase {
 	return &profileUseCase{
 		ProfileRepository: profileRepository,
 		UserRepository:    userRepository,
