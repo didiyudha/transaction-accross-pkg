@@ -27,6 +27,13 @@ type profileRepository struct {
 	TrxCtx context.Context
 }
 
+func NewProfileRepository(dbWrite, dbRead *sql.DB) ProfileRepository {
+	return &profileRepository{
+		dbRead:        dbRead,
+		dbWrite:       dbWrite,
+	}
+}
+
 func (uq *profileRepository) StartTx(ctx context.Context) (ProfileRepository, error) {
 	trx, err := uq.dbWrite.Begin()
 	if err != nil {
