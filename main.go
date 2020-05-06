@@ -8,7 +8,7 @@ import (
 	"github.com/didiyudha/transaction-accross-pkg/domain/profile/usecase"
 	userrepo "github.com/didiyudha/transaction-accross-pkg/domain/user/repository"
 	"github.com/didiyudha/transaction-accross-pkg/internal/platform/postgres"
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 	"github.com/sirupsen/logrus"
 )
 
