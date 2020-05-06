@@ -36,5 +36,14 @@ func Open(cfg Config) (*sql.DB, error) {
 		RawQuery: q.Encode(),
 	}
 
-	return sql.Open("postgres", u.String())
+	db, err := sql.Open("postgres", u.String())
+	if err != nil {
+		return nil, err
+	}
+
+	// Ping database server.
+	if err := db.Ping(); err != nil {
+		return nil, err
+	}
+	return db, nil
 }
