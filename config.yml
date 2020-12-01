@@ -1,0 +1,7 @@
+port: 8080
+db:
+  user: didiyudha
+  password: ""
+  host: "127.0.0.1:5432"
+  name: profile
+  disableTLS: true
